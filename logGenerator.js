@@ -62,44 +62,41 @@ function generateLog() {
     
     let message;
     let logLevel;
+    let keywordPrefix = '';
 
     switch(eventType) {
         case eventTypes.AUTH:
             message = `${userActivities[Math.floor(Math.random() * userActivities.length)]} by user ${user} from ${sourceIP}`;
             logLevel = Math.random() > 0.8 ? 'error' : 'info';
+            keywordPrefix = logLevel === 'error' ? '[FAILED LOGIN]' : '[LOGIN]';
             break;
         case eventTypes.SECURITY:
             message = `${securityEvents[Math.floor(Math.random() * securityEvents.length)]} from ${sourceIP}`;
             logLevel = 'warn';
+            keywordPrefix = '[SECURITY WARNING]';
             break;
         case eventTypes.SYSTEM:
             message = `${systemEvents[Math.floor(Math.random() * systemEvents.length)]} on ${os.hostname()}`;
             logLevel = Math.random() > 0.9 ? 'error' : 'info';
+            keywordPrefix = logLevel === 'error' ? '[SYSTEM ERROR]' : '[SYSTEM INFO]';
             break;
         case eventTypes.NETWORK:
             message = `${networkEvents[Math.floor(Math.random() * networkEvents.length)]} from ${sourceIP}`;
             logLevel = Math.random() > 0.7 ? 'warn' : 'info';
+            keywordPrefix = logLevel === 'warn' ? '[NETWORK WARNING]' : '[NETWORK INFO]';
             break;
     }
 
-    const logEntry = {
-        timestamp,
-        eventType,
-        message,
-        sourceIP,
-        user,
-        hostname: os.hostname()
-    };
-
+    // Log plain text in syslog format (no JSON)
     switch(logLevel) {
         case 'error':
-            logger.error(JSON.stringify(logEntry));
+            logger.error(`${keywordPrefix} ${message}`);
             break;
         case 'warn':
-            logger.warn(JSON.stringify(logEntry));
+            logger.warn(`${keywordPrefix} ${message}`);
             break;
         default:
-            logger.info(JSON.stringify(logEntry));
+            logger.info(`${keywordPrefix} ${message}`);
     }
 }
 
