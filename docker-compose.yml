@@ -1,9 +1,0 @@
-version: '3.8'
-services:
-  nodeapp:
-    build: .
-    volumes:
-      - /var/log/myapp:/app/logs
-    environment:
-      - LOG_PATH=/app/logs/app.log
-    restart: unless-stopped 
